@@ -1,126 +1,39 @@
-package SecondComp2112Project;
+package Project3Data2112;
 
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        FileSystem fileSystem = new FileSystem();
-        Scanner scanner = new Scanner(System.in);
-        fileSystem.loadFromFile();
-        int choice;
-        do {
-            System.out.println("\nMenü:");
-            System.out.println("1. Add new directory");
-            System.out.println("2. Add new file");
-            System.out.println("3. Delete directory");
-            System.out.println("4. Delete file");
-            System.out.println("5. List all files");
-            System.out.println("6. List all directories");
-            System.out.println("7. Print tree");
-            System.out.println("8. List directory contents");
-            System.out.println("9. Search by name");
-            System.out.println("10.Search by extension");
-            System.out.println("11.View full path");
-            System.out.println("12.Exit");
+        ReadGraph readGraph = new ReadGraph();
+        Graph graph = new Graph();
+        Scanner input = new Scanner(System.in);
 
-            System.out.print("Make your choice: ");
-            choice = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choice) {
-                case 1:
-                    fileSystem.printEntireTree(false);
-                    System.out.print("Which directory do you want to add it to?: ");
-                    String parentDir1 = scanner.nextLine();
-                    System.out.print("Name of the new directory: ");
-                    String newDirName = scanner.nextLine();
-                    fileSystem.addDirectory(parentDir1, newDirName, "USER");
-                    break;
-
-                case 2:
-                    fileSystem.printEntireTree(false);
-                    System.out.print("Which directory do you want to add it to?: ");
-                    String parentDir2 = scanner.nextLine();
-                    System.out.print("Name of the new file (e.g. file.txt): ");
-                    String fileName = scanner.nextLine();
-                    System.out.print("File size (bytes): ");
-                    int size = scanner.nextInt();
-                    scanner.nextLine();
-                    fileSystem.addFile(parentDir2, fileName, size, "USER");
-                    break;
-
-                case 3:
-                    fileSystem.printEntireTree(false);
-                    System.out.print("Name of the directory to be deleted: ");
-                    String dirToDelete = scanner.nextLine();
-                    fileSystem.deleteDirectory(dirToDelete);
-                    break;
-
-                case 4:
-                    fileSystem.printEntireTree(false);
-                    System.out.print("Name of the file to be deleted: ");
-                    String fileToDelete = scanner.nextLine();
-                    fileSystem.deleteFile(fileToDelete);
-                    break;
-
-                case 5:
-                    fileSystem.listAllFiles();
-break;
-                case 6:
-                    fileSystem.listAllDirectories();
-                    break;
-
-                case 7:
-                    System.out.println("Tree structure:");
-                    fileSystem.printEntireTree(false);
-
-                    /*  System.out.print("\nThe name of the node whose details you want to see: ");
-                    String nodeName = scanner.nextLine();
-                    fileSystem.showNodeDetails(nodeName);*/
-                    break;
-
-                case 8:
-                    //dizinin içinde kaç tane file var kaç tane alt dizin var onu yazdırır ve özelliklerini verir
-                    fileSystem.printEntireTree(false);
-                    System.out.print("Which directory's contents do you want to list?: ");
-                    String listDir = scanner.nextLine();
-                    fileSystem.listContents(listDir);
-                    break;
-                case 9:
-                    //ismini arattırıp dizin mi yoksa dosya mı onu buldurtma
-                    fileSystem.printEntireTree(false);
-                    System.out.print("Search name: ");
-                    String searchName = scanner.nextLine();
-                    fileSystem.searchByName(searchName);
-                    fileSystem.showNodeDetails(searchName);
-                    break;
-
-                case 10:
-                    //txt,png,zip olarak kaç dosya varsa istediğini yazdırır
-                    fileSystem.printEntireTree(false);
-                    System.out.print("Extension to search (e.g. txt,png,zip): ");
-                    String searchExt = scanner.nextLine();
-                    fileSystem.searchByExtension(searchExt);
-                    break;
-                case 11:
-                    //istediğin bir dosyaya ya da dizine nasıl ulaşılabileceğinin yolunu çiziyor
-                    fileSystem.printEntireTree(false);
-                    System.out.print("File/directory name whose path will be displayed: ");
-                    String pathTarget = scanner.nextLine();
-                    fileSystem.displayPath(pathTarget);
-                    break;
-                case 12:
-                    System.out.println("Signing out");
-                    break;
-
-                default:
-                    System.out.println("Invalid selection, try again.");
-                    break;
-            }
-        } while (choice != 12);
-
-        scanner.close();
-    }
-} 
+        readGraph.ReadGraphFromFile(graph, "/Users/egeseymen/Desktop/graph.txt");
+        System.out.println("Enter two cities to check path:");
+        String city1 = input.next();
+        String city2 = input.next();
+        
+        System.out.println("=== Path Information ===");
+        System.out.println("Is there a path: " + graph.IsThereAPath(city1, city2));
+        graph.BFSfromTo(city1, city2);
+        graph.DFSfromTo(city1, city2);
+        int shortestPath = graph.WhatIsShortestPathLength(city1, city2);
+        if (shortestPath != -1) {
+            System.out.println("Shortest Path Length: " + shortestPath);
+        }
+        System.out.println("Number of simple paths: " + graph.NumberOfSimplePaths(city1, city2));
  
+        System.out.println("\n=== Graph Analysis ===");
+        System.out.println("Neighbors of " + city1 + ": " + graph.Neighbors(city1));
+        System.out.println("Highest degree: " + graph.HighestDegree());
+        System.out.println("Is the graph directed? " + graph.IsDirected());
+        System.out.println("Are the cities adjacent? " + graph.AreTheyAdjacent(city1, city2));
+
+        System.out.println("\n=== Cycle Information ===");
+        System.out.println("Is there a cycle starting and ending at " + city1 + "? " + graph.IsThereACycle(city1));
+        
+        System.out.println("\n=== Component Information ===");
+        System.out.println("Number of vertices in the component containing " + city1 + ": " + graph.NumberOfVerticesInComponent(city1));
+    }
+}
